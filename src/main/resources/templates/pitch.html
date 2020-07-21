@@ -6,9 +6,20 @@
 Welcome to the Pitch booking service.
 <h1>Form</h1>
 <form action="#" th:action="@{/pitch}" th:object="${pitch}" method="post">
-    <p> Pitch Name: <input type="text" th:field="*{name}"/></p>
+    <p> Pitch Name: <input type="text" th:field="${pitch.name}"/></p>
     <p> <input type="submit" value="Submit" />
         <input type="reset" value="Reset"/></p>
+    <p></p>
+    <div th:if="${pitches != null}">
+        <table>
+            <th:block th:each="pitch : ${pitches}" th:object="${pitch}">
+                <tr>
+                    <td th:text="*{name}"></td>
+                </tr>
+            </th:block>
+        </table>
+
+    </div>
 </form>
 </body>
 </html>
