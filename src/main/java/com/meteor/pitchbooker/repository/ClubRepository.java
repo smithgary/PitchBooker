@@ -1,14 +1,13 @@
 package com.meteor.pitchbooker.repository;
 
-import com.meteor.pitchbooker.domain.Pitch;
+import com.meteor.pitchbooker.domain.Club;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface PitchRepository extends JpaRepository<Pitch, Long> {
-
+public interface ClubRepository extends JpaRepository<Club, Long> {
     @Query
-    public List<Pitch> findByName(String name);
+    public List<Club> findByClubName(String name);
 
 }

@@ -1,5 +1,8 @@
-package com.meteor.pitchbooker;
+package com.meteor.pitchbooker.web;
 
+import com.meteor.pitchbooker.domain.Club;
+import com.meteor.pitchbooker.domain.Pitch;
+import com.meteor.pitchbooker.repository.ClubRepository;
 import com.meteor.pitchbooker.repository.PitchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,9 +18,11 @@ import java.util.List;
 public class RootController {
     @Autowired
     private PitchRepository pitchRepository;
+    @Autowired
+    private ClubRepository clubRepository;
 
     @GetMapping("/pitch")
-    public String indexMap(Model model){
+    public String showPitches(Model model){
         List<Pitch> findPitches = pitchRepository.findAll();
         model.addAttribute("pitches", findPitches);
 
@@ -26,12 +31,34 @@ public class RootController {
     }
     @PostMapping("/pitch")
     public String storePitch(@ModelAttribute Pitch pitch, ModelMap model){
-        //Store?
         pitchRepository.save(pitch);
         List<Pitch> findPitches = pitchRepository.findAll();
         model.addAttribute("pitches", findPitches);
 
         System.out.println("New pitch: " + pitch.getName());
         return "pitch";
+    }
+    @GetMapping("/club")
+    public String showClubs(Model model){
+        List<Club> findClubs = clubRepository.findAll();
+        model.addAttribute("clubs", findClubs);
+
+        model.addAttribute("club", new Club());
+
+        List<Pitch> findPitches = pitchRepository.findAll();
+        model.addAttribute("pitches", findPitches);
+
+        model.addAttribute("pitch", new Pitch());
+        return "club";
+    }
+    @PostMapping("/club")
+    public String storeClub(@ModelAttribute Club club, @ModelAttribute Pitch pitch, ModelMap model){
+        clubRepository.save(club);
+        List<Club> findClubs = clubRepository.findAll();
+        model.addAttribute("clubs", findClubs);
+
+        List<Pitch> findPitches = pitchRepository.findAll();
+        model.addAttribute("pitches", findPitches);
+        return "club";
     }
 }

@@ -1,4 +1,4 @@
-package com.meteor.pitchbooker;
+package com.meteor.pitchbooker.domain;
 
 
 import javax.persistence.Entity;
