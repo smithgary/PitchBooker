@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class RootController {
@@ -50,6 +51,44 @@ public class RootController {
 
         return "pitch";
     }
+
+    @PostMapping("/addPitch")
+    public String allocatePitch(@ModelAttribute Pitch pitch, Club club, ModelMap model, String activeClubName){
+        //First handle the Choice of Club
+        logger.info("Club chosen id is : " + club.getId());
+        Long clubId = club.getId();
+        Optional<Club> chosenClub = clubRepository.findById(clubId);
+        logger.info("Pitch chosen id is : " + pitch.getId());
+        Long pitchId = pitch.getId();
+        Optional<Pitch> chosenPitch = pitchRepository.findById(pitchId);
+
+        if (chosenClub.isPresent()) {
+            logger.info("YEP: " + chosenClub.get().getClubName() + " Was found");
+            model.addAttribute("activeClub", club.getId());
+            model.addAttribute("activeClubName", chosenClub.get().getClubName());
+            List<Club> findClubs = clubRepository.findAll();
+            model.addAttribute("clubs", findClubs);
+            model.addAttribute("club", chosenClub);
+            model.addAttribute("pitches", pitchRepository.findAll());
+            return "clubset";
+        }
+        if (chosenPitch.isPresent()) {
+            logger.info("YEP: " + chosenPitch.get().getName() + " Was found");
+
+            logger.info("LETS SEE, WAS : " + activeClubName + "present?");
+//            model.addAttribute("activeClub", club.getId());
+//            model.addAttribute("activeClubName", chosenClub.get().getClubName());
+//            List<Club> findClubs = clubRepository.findAll();
+//            model.addAttribute("clubs", findClubs);
+//            model.addAttribute("club", chosenClub);
+//            model.addAttribute("pitches", pitchRepository.findAll());
+            return "clubset";
+        }
+
+        model.addAttribute("pitches", pitchRepository.findAll());
+        return "pitch";
+    }
+
     @GetMapping("/club")
     public String showClubs(Model model){
         List<Club> findClubs = clubRepository.findAll();

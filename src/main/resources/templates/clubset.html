@@ -21,19 +21,28 @@
 
 
 <h2>Form</h2>
-<form action="#" th:action="@{/club}" th:object="${club}" method="post">
-Club:   <select th:field="*{clubName}">
+<form action="#" th:action="@{/addPitch}" th:object="${club}" method="post">
+Club:   <select th:field="*{id}">
     <option th:each="club : ${clubs}"
             th:value="${club.id}"
             th:text="${club.clubName}">Club</option>
-</select>
+    </select>
 
-Pitch:   <select th:field="*{pitches}">
-            <option th:each="pitch : ${pitches}"
-                    th:value="${pitches}"
-                    th:text="${pitch.name}">Pitch</option>
-        </select>
+    <input type="submit" value="Select Club">
+</form>
+
+<form action="#" th:action="@{/addPitch}" th:object="${pitch}" method="post">
+    <div th:if="${activeClub != null}">
+        <p th:text="${activeClubName}">Your club Name</p>
+
+    Pitch:   <select th:field="*{id}">
+    <option th:each="pitch : ${pitches}"
+            th:value="${pitch.id}"
+            th:text="${pitch.name}">Pitch</option>
+    </select>
+
     <input type="submit" value="Allocate Pitch to Club">
+    </div>
 </form>
 </body>
 </html>
