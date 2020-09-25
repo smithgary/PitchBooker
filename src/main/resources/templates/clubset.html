@@ -1,0 +1,39 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Club settings</title>
+    <script type="text/javascript">
+        $(function () {
+            $("#deleteItem").click(function () {
+                $("#action").val("delete");
+                $("#frmClub").submit();
+            });
+        });
+        $(function () {
+            $("#addPlayerToFamily").click(function () {
+                $("#action").val("addPitchToClub");
+                $("#frmClub").submit();
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Set the Club up</h1>
+
+
+<h2>Form</h2>
+<form action="#" th:action="@{/club}" th:object="${club}" method="post">
+Club:   <select th:field="*{clubName}">
+    <option th:each="club : ${clubs}"
+            th:value="${club.id}"
+            th:text="${club.clubName}">Club</option>
+</select>
+
+Pitch:   <select th:field="*{pitches}">
+            <option th:each="pitch : ${pitches}"
+                    th:value="${pitches}"
+                    th:text="${pitch.name}">Pitch</option>
+        </select>
+    <input type="submit" value="Allocate Pitch to Club">
+</form>
+</body>
+</html>

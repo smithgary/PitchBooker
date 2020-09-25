@@ -4,6 +4,8 @@ import com.meteor.pitchbooker.domain.Club;
 import com.meteor.pitchbooker.domain.Pitch;
 import com.meteor.pitchbooker.repository.ClubRepository;
 import com.meteor.pitchbooker.repository.PitchRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,16 @@ public class RootController {
     @Autowired
     private ClubRepository clubRepository;
 
+    private Logger logger = LoggerFactory.getLogger(RootController.class);
+    @GetMapping("/")
+    public String showWelcome(){
+        return "welcome";
+    }
+
+    @GetMapping("/error")
+    public String showError(){
+        return "error";
+    }
     @GetMapping("/pitch")
     public String showPitches(Model model){
         List<Pitch> findPitches = pitchRepository.findAll();
@@ -34,8 +46,8 @@ public class RootController {
         pitchRepository.save(pitch);
         List<Pitch> findPitches = pitchRepository.findAll();
         model.addAttribute("pitches", findPitches);
+        logger.info("New pitch created - {}", pitch.getName());
 
-        System.out.println("New pitch: " + pitch.getName());
         return "pitch";
     }
     @GetMapping("/club")
@@ -54,11 +66,38 @@ public class RootController {
     @PostMapping("/club")
     public String storeClub(@ModelAttribute Club club, @ModelAttribute Pitch pitch, ModelMap model){
         clubRepository.save(club);
+        logger.info("Saved Club as {}", club.getClubName());
+
         List<Club> findClubs = clubRepository.findAll();
         model.addAttribute("clubs", findClubs);
 
         List<Pitch> findPitches = pitchRepository.findAll();
         model.addAttribute("pitches", findPitches);
+
+        logger.info("Clubs pitches are: {}", pitch.getName());
         return "club";
+    }
+    @GetMapping("/clubset")
+    public String showClubSet(Model model){
+        List<Club> findClubs = clubRepository.findAll();
+        model.addAttribute("clubs", findClubs);
+
+        model.addAttribute("club", new Club());
+
+        List<Pitch> findPitches = pitchRepository.findAll();
+        model.addAttribute("pitches", findPitches);
+
+        model.addAttribute("pitch", new Pitch());
+        return "clubset";
+    }
+
+    @Autowired
+    public void setPitchRepository(PitchRepository pitchRepository){
+        this.pitchRepository = pitchRepository;
+    }
+
+    @Autowired
+    public void setClubRepository(ClubRepository clubRepository){
+        this.clubRepository = clubRepository;
     }
 }
