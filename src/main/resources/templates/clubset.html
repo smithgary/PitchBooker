@@ -34,7 +34,8 @@ Club:   <select th:field="*{id}">
 <form action="#" th:action="@{/addPitch}" th:object="${pitch}" method="post">
     <div th:if="${activeClub != null}">
         <p th:text="${activeClubName}">Your club Name</p>
-
+        <input type="hidden" th:value="${activeClubName}" th:attr="name='activeClubName'" />
+        <input type="hidden" th:value="${activeClubId}" th:attr="name='activeClubId'" />
     Pitch:   <select th:field="*{id}">
     <option th:each="pitch : ${pitches}"
             th:value="${pitch.id}"
@@ -44,5 +45,15 @@ Club:   <select th:field="*{id}">
     <input type="submit" value="Allocate Pitch to Club">
     </div>
 </form>
+<div th:if="${populatedClubs != null}">
+    <table>
+        <th:block th:each="club : ${populatedClubs}" th:object="${club}">
+            <tr>
+                <td th:text="*{clubName}"></td>
+                <td th:if="${club.pitches.size()>0}" th:text="${club.pitches.get(0).name}"></td>
+            </tr>
+        </th:block>
+    </table>
+</div>
 </body>
 </html>

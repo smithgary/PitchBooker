@@ -53,7 +53,7 @@ public class RootController {
     }
 
     @PostMapping("/addPitch")
-    public String allocatePitch(@ModelAttribute Pitch pitch, Club club, ModelMap model, String activeClubName){
+    public String allocatePitch(@ModelAttribute Pitch pitch, Club club, ModelMap model, String activeClubName, String activeClubId){
         //First handle the Choice of Club
         logger.info("Club chosen id is : " + club.getId());
         Long clubId = club.getId();
@@ -65,23 +65,34 @@ public class RootController {
         if (chosenClub.isPresent()) {
             logger.info("YEP: " + chosenClub.get().getClubName() + " Was found");
             model.addAttribute("activeClub", club.getId());
+            model.addAttribute("activeClubId", chosenClub.get().getId());
+            model.addAttribute("activeClubsPitches", chosenClub.get().getPitches());
             model.addAttribute("activeClubName", chosenClub.get().getClubName());
             List<Club> findClubs = clubRepository.findAll();
             model.addAttribute("clubs", findClubs);
+            model.addAttribute("populatedClubs", findClubs);
             model.addAttribute("club", chosenClub);
             model.addAttribute("pitches", pitchRepository.findAll());
             return "clubset";
         }
         if (chosenPitch.isPresent()) {
             logger.info("YEP: " + chosenPitch.get().getName() + " Was found");
-
-            logger.info("LETS SEE, WAS : " + activeClubName + "present?");
-//            model.addAttribute("activeClub", club.getId());
-//            model.addAttribute("activeClubName", chosenClub.get().getClubName());
-//            List<Club> findClubs = clubRepository.findAll();
-//            model.addAttribute("clubs", findClubs);
-//            model.addAttribute("club", chosenClub);
-//            model.addAttribute("pitches", pitchRepository.findAll());
+            logger.info("LETS SEE, WAS : " + activeClubName + " present?");
+            if(!activeClubId.isEmpty()){
+                Long activeClubIdNo = Long.parseLong(activeClubId);
+                Optional<Club> activeClub = clubRepository.findById(activeClubIdNo);
+                if (activeClub.isPresent()){
+                    List<Pitch> activeClubsPitches = activeClub.get().getPitches();
+                    activeClubsPitches.add(chosenPitch.get());
+                    activeClub.get().setPitches(activeClubsPitches);
+                    clubRepository.save(activeClub.get());
+                    chosenPitch.get().setClub(activeClub.get());
+                    pitchRepository.save(chosenPitch.get());
+                }
+            }
+            List<Club> foundClubs = clubRepository.findAll();
+            model.addAttribute("populatedClubs", foundClubs);
+            model.addAttribute("pitches", pitchRepository.findAll());
             return "clubset";
         }
 
