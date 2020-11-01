@@ -26,6 +26,11 @@ public class RootController {
 
     private Logger logger = LoggerFactory.getLogger(RootController.class);
     @GetMapping("/")
+    public String showHome(){
+        return "home";
+    }
+
+    @GetMapping("/welcome")
     public String showWelcome(){
         return "welcome";
     }
