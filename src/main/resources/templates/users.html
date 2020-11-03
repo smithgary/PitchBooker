@@ -8,11 +8,12 @@
 <h1>Displayed List of Users</h1>
 <h3>Enter new User:-</h3>
 <form action="#" th:action="@{/users}" th:object="${user}" method="post">
-    <p> First Name: <input type="text" th:field="${user.firstName}"/>
-    <p> Last Name: <input type="text" th:field="${user.lastName}"/>
-    <p> Email Address: <input type="email" th:field="${user.email}"/>
-    <p> Mobile Number: <input type="tel" th:field="${user.mobileNo}"/>
-    <p> Password: <input type="password" th:field="${user.passWord}"/>
+    <p> First Name: <input type="text" th:field="*{firstName}"/>
+    <p> Last Name: <input type="text" th:field="*{lastName}"/>
+    <p> Email Address: <input type="email" th:field="*{email}"/>
+    <p> Mobile Number: <input type="tel" th:field="*{mobileNo}"/>
+    <p> Date of Birth: <input type="date" th:field="*{dateOfBirth}"/>
+    <p> Password: <input type="password" th:field="*{passWord}"/>
     <div><input type="submit" value="Create User"/></div>
 </form>
 <h3><b><u>List of existing users</u></b></h3>
@@ -23,6 +24,7 @@
             <th>Last Name</th>
             <th>Email</th>
             <th>Mobile Phone Number</th>
+            <th>Date of Birth</th>
             <th>Password</th>
             <th>Enabled</th>
         </tr>
@@ -32,6 +34,7 @@
                 <td th:text="*{lastName}"></td>
                 <td th:text="*{email}"></td>
                 <td th:text="*{mobileNo}"></td>
+                <td th:text="*{dateOfBirth}"></td>
                 <td th:text="*{passWord}"></td>
                 <td th:text="*{enabled}"></td>
             </tr>

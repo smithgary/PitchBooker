@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class Club {
@@ -14,6 +15,8 @@ public class Club {
  private String clubName;
  @OneToMany
  private List<Pitch> pitches;
+
+ //private Map<User, List<Role, Group>> usersRoles;
 
     public Long getId() {
         return id;
