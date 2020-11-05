@@ -13,9 +13,11 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -49,6 +51,23 @@ public class UserController {
         model.addAttribute("user", new User());
         return "users";
     }
+
+    @GetMapping("/user/{id}/roles")
+    public String showUserRoles(Model model, @PathVariable String id) {
+        String loggedInUser = LoggedInUser.getLoggedInUser();
+        logger.info("Request from user:{} to show details of user with id: {}", loggedInUser, id);
+        //TODO: Check that logged in user has permission to access this.
+        //ie role is > level 80 or something.
+        Long usersId = Long.parseLong(id);
+        Optional<User> user = userRepository.findById(usersId);
+        if(user.isPresent()){
+            model.addAttribute("user", user.get());
+            model.addAttribute("usersClubRoles", user.get().getClubRoles());
+        }
+
+        return "user-roles";
+    }
+
     @GetMapping("/users/club")
     public String showClubUsers(Model model) {
         String user = LoggedInUser.getLoggedInUser();

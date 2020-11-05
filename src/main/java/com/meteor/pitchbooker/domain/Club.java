@@ -1,11 +1,8 @@
 package com.meteor.pitchbooker.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Entity
 public class Club {
@@ -15,8 +12,8 @@ public class Club {
  private String clubName;
  @OneToMany
  private List<Pitch> pitches;
-
- //private Map<User, List<Role, Group>> usersRoles;
+ @OneToMany
+ private Set<ClubRole> clubRoles;
 
     public Long getId() {
         return id;
@@ -40,5 +37,14 @@ public class Club {
 
     public void setPitches(List<Pitch> pitches) {
         this.pitches = pitches;
+    }
+
+    @OneToMany(mappedBy = "club")
+    public Set<ClubRole> getClubRoles() {
+        return clubRoles;
+    }
+
+    public void setClubRoles(Set<ClubRole> clubRoles) {
+        this.clubRoles = clubRoles;
     }
 }

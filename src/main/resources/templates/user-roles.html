@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">>
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+</head>
+<body>
+<h1>Edit Users roles</h1>
+
+<h3><b><u>Users details</u></b></h3>
+<div th:if="${user != null}">
+    <table th:object="${user}">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Mobile Phone Number</th>
+            <th>Date of Birth</th>
+            <th>Password</th>
+            <th>Enabled</th>
+        </tr>
+        <tr>
+            <td th:text="*{firstName}"></td>
+            <td th:text="*{lastName}"></td>
+            <td th:text="*{email}"></td>
+            <td th:text="*{mobileNo}"></td>
+            <td th:text="*{dateOfBirth}"></td>
+            <td th:text="*{passWord}"></td>
+            <td th:text="*{enabled}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

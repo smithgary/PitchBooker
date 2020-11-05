@@ -2,10 +2,9 @@ package com.meteor.pitchbooker.domain;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -18,6 +17,7 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
     private Boolean enabled;
+    private Set<ClubRole> clubRoles;
 
     @Id
     @GeneratedValue
@@ -83,5 +83,14 @@ public class User {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @OneToMany(mappedBy = "user")
+    public Set<ClubRole> getClubRoles() {
+        return clubRoles;
+    }
+
+    public void setClubRoles(Set<ClubRole> clubRoles) {
+        this.clubRoles = clubRoles;
     }
 }
