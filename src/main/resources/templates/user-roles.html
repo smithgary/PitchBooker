@@ -29,6 +29,37 @@
             <td th:text="*{enabled}"></td>
         </tr>
     </table>
+    <div th:if="${user !=null}">
+        <form action="#" th:action="@{/user/${user.userId}/roles}" th:object="${clubRole}" method="post">
+            <p>Group</p>
+            <select th:field="*{club}">
+                <option th:each="club: ${clubs}"
+                        th:value="${club}"
+                        th:text="${club.clubName}">Club or School</option>
+            </select>
+            <select th:field="*{group}">
+                <option th:each="ageGroup: ${groups}"
+                        th:value="${ageGroup.group}"
+                        th:text="${ageGroup.group}">Age Group</option>
+             </select>
+            <select th:field="*{code}">
+                <option th:each="gameType: ${codes}"
+                        th:value="${gameType.code}"
+                        th:text="${gameType.code}">Game Type</option>
+            </select>
+            <select th:field="*{role}">
+                <option th:each="role: ${roles}"
+                        th:value="${role.role}"
+                        th:text="${role.role}">Role</option>
+            </select>
+            <select th:field="*{year}">
+                <option th:each="season: ${seasons}"
+                        th:value="${season}"
+                        th:text="${season}">Year</option>
+            </select>
+            <input type="submit" value="Add">
+        </form>
+    </div>
 </div>
 </body>
 </html>

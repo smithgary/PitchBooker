@@ -17,8 +17,11 @@ public enum Group {
     OVER_35("OVER_35"),
     SLOW("SLOW");
 
-    private String group;
+    private final String group;
 
-    private Group(String group) { this.group = group;}
+    Group (String group) {
+        this.group = group;
+    }
     public String getGroup() {return group;}
+
 }

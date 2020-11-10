@@ -1,8 +1,8 @@
 package com.meteor.pitchbooker.web;
 
-import com.meteor.pitchbooker.domain.Club;
-import com.meteor.pitchbooker.domain.User;
+import com.meteor.pitchbooker.domain.*;
 import com.meteor.pitchbooker.repository.ClubRepository;
+import com.meteor.pitchbooker.repository.ClubRoleRepository;
 import com.meteor.pitchbooker.repository.UserRepository;
 import com.meteor.pitchbooker.utils.LoggedInUser;
 import org.slf4j.Logger;
@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class UserController {
@@ -27,6 +30,7 @@ public class UserController {
     private ClubRepository clubRepository;
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private ClubRoleRepository clubRoleRepository;
 
     //Only viewable by super users across all clubs
     @GetMapping("/users")
@@ -64,10 +68,50 @@ public class UserController {
             model.addAttribute("user", user.get());
             model.addAttribute("usersClubRoles", user.get().getClubRoles());
         }
-
+        model.addAttribute("clubRole", new ClubRole());
+        //Add enums
+        List<Club> listOfClubs = clubRepository.findAll();
+        model.addAttribute("clubs", listOfClubs);
+        model.addAttribute("groups", Group.values());
+        model.addAttribute("codes", Code.values());
+        model.addAttribute("roles", Role.values());
+        List<Year> yearOptions = new ArrayList<>();
+        yearOptions.add(Year.now().plusYears(1));
+        yearOptions.add(Year.now());
+        yearOptions.add(Year.now().minusYears(1));
+        model.addAttribute("seasons", yearOptions);
         return "user-roles";
     }
-
+    @PostMapping("/user/{id}/roles")
+    public String addUserRoles(Model model, @ModelAttribute ClubRole clubRole, @PathVariable String id) {
+        String loggedInUser = LoggedInUser.getLoggedInUser();
+        logger.info("Request from user:{} to show details of user with id: {}", loggedInUser, id);
+        //TODO: Check that logged in user has permission to access this.
+        //ie role is > level 80 or something.
+        Long usersId = Long.parseLong(id);
+        Optional<User> user = userRepository.findById(usersId);
+        if(user.isPresent()){
+            model.addAttribute("user", user.get());
+            //Save clubRole info..
+            clubRoleRepository.save(clubRole);
+            Set<ClubRole> usersClubRoles = user.get().getClubRoles();
+            usersClubRoles.add(clubRole);
+            user.get().setClubRoles(usersClubRoles);
+            model.addAttribute("usersClubRoles", user.get().getClubRoles());
+        }
+        //Add enums
+        List<Club> listOfClubs = clubRepository.findAll();
+        model.addAttribute("clubs", listOfClubs);
+        model.addAttribute("groups", Group.values());
+        model.addAttribute("codes", Code.values());
+        model.addAttribute("roles", Role.values());
+        List<Year> yearOptions = new ArrayList<>();
+        yearOptions.add(Year.now().plusYears(1));
+        yearOptions.add(Year.now());
+        yearOptions.add(Year.now().minusYears(1));
+        model.addAttribute("seasons", yearOptions);
+        return "user-roles";
+    }
     @GetMapping("/users/club")
     public String showClubUsers(Model model) {
         String user = LoggedInUser.getLoggedInUser();
@@ -100,5 +144,9 @@ public class UserController {
     @Autowired
     public void setClubRepository(ClubRepository clubRepository){
         this.clubRepository = clubRepository;
+    }
+    @Autowired
+    public void setClubRoleRepository(ClubRoleRepository clubRoleRepository){
+        this.clubRoleRepository = clubRoleRepository;
     }
 }
