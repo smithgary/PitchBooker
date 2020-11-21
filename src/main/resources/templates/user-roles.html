@@ -18,6 +18,7 @@
             <th>Date of Birth</th>
             <th>Password</th>
             <th>Enabled</th>
+            <th>User id</th>
         </tr>
         <tr>
             <td th:text="*{firstName}"></td>
@@ -27,37 +28,62 @@
             <td th:text="*{dateOfBirth}"></td>
             <td th:text="*{passWord}"></td>
             <td th:text="*{enabled}"></td>
+            <td th:text="*{userId}"></td>
         </tr>
     </table>
     <div th:if="${user !=null}">
-        <form action="#" th:action="@{/user/${user.userId}/roles}" th:object="${clubRole}" method="post">
-            <p>Group</p>
-            <select th:field="*{club}">
-                <option th:each="club: ${clubs}"
-                        th:value="${club}"
-                        th:text="${club.clubName}">Club or School</option>
-            </select>
-            <select th:field="*{group}">
-                <option th:each="ageGroup: ${groups}"
-                        th:value="${ageGroup.group}"
-                        th:text="${ageGroup.group}">Age Group</option>
-             </select>
-            <select th:field="*{code}">
-                <option th:each="gameType: ${codes}"
-                        th:value="${gameType.code}"
-                        th:text="${gameType.code}">Game Type</option>
-            </select>
-            <select th:field="*{role}">
-                <option th:each="role: ${roles}"
-                        th:value="${role.role}"
-                        th:text="${role.role}">Role</option>
-            </select>
-            <select th:field="*{year}">
-                <option th:each="season: ${seasons}"
-                        th:value="${season}"
-                        th:text="${season}">Year</option>
-            </select>
-            <input type="submit" value="Add">
+        <form action="#" th:action="@{/user/{id}/roles(id=${user.userId})}" th:object="${clubRole}" method="post">
+            <p th:text="${user.userId}"></p>
+            <table>
+                <tr>
+                    <th>Club</th>
+                    <th>Age Group</th>
+                    <th>Code</th>
+                    <th>Role</th>
+                    <th>Season</th>
+                    <th> </th>
+                </tr>
+                <tr>
+                    <td>
+                        <select th:field="*{club.id}">
+                            <option th:each="club: ${clubs}"
+                                    th:value="${club.id}"
+                                    th:text="${club.clubName}">Club or School</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select th:field="*{group}">
+                            <option th:each="ageGroup: ${groups}"
+                                    th:value="${ageGroup.group}"
+                                    th:text="${ageGroup.group}">Age Group</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select th:field="*{code}">
+                            <option th:each="gameType: ${codes}"
+                                    th:value="${gameType.code}"
+                                    th:text="${gameType.code}">Game Type</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select th:field="*{role}">
+                            <option th:each="role: ${roles}"
+                                    th:value="${role}"
+                                    th:text="${role.role}">Role</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select th:field="*{year}">
+                            <option th:each="season: ${seasons}"
+                                    th:value="${season}"
+                                    th:text="${season}">Year</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="submit" value="Add">
+                    </td>
+                </tr>
+            </table>
         </form>
     </div>
 </div>

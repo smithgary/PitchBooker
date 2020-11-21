@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -37,6 +40,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .password("Testing123")
                     .roles("USER")
                     .build();
-        return new InMemoryUserDetailsManager(user);
+        UserDetails adminUser =
+                User.withDefaultPasswordEncoder()
+                        .username("joy@jean.com")
+                        .password("easy")
+                        .roles("USER", "ADMIN")
+                        .build();
+        List<UserDetails> users = new ArrayList<>();
+        users.add(user);
+        users.add(adminUser);
+        return new InMemoryUserDetailsManager(users);
+        //return new InMemoryUserDetailsManager(user);
     }
 }

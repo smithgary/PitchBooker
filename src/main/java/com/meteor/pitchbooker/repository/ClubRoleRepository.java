@@ -10,7 +10,7 @@ import java.util.Set;
 
 public interface ClubRoleRepository extends JpaRepository<ClubRole, Long> {
 
-//    @Query
-//    public Set<ClubRole> findClubRole(String clubName);
+    @Query
+    public Set<ClubRole> findAllByClub(String clubName);
 
 }

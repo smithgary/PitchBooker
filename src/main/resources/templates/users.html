@@ -27,6 +27,7 @@
             <th>Date of Birth</th>
             <th>Password</th>
             <th>Enabled</th>
+            <th>Edit User</th>
         </tr>
         <th:block th:each="user : ${users}" th:object="${user}">
             <tr>
@@ -37,6 +38,7 @@
                 <td th:text="*{dateOfBirth}"></td>
                 <td th:text="*{passWord}"></td>
                 <td th:text="*{enabled}"></td>
+                <td><a th:href="@{/user/{id}/roles(id=${user.userId})}">Edit</a></td>
             </tr>
         </th:block>
     </table>
