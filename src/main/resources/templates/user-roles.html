@@ -52,10 +52,10 @@
                         </select>
                     </td>
                     <td>
-                        <select th:field="*{group}">
-                            <option th:each="ageGroup: ${groups}"
-                                    th:value="${ageGroup.group}"
-                                    th:text="${ageGroup.group}">Age Group</option>
+                        <select th:field="*{ageGrouping}">
+                            <option th:each="ageGroup: ${ageGroups}"
+                                    th:value="${ageGroup.ageGrouping}"
+                                    th:text="${ageGroup.ageGrouping}">Age Group</option>
                         </select>
                     </td>
                     <td>

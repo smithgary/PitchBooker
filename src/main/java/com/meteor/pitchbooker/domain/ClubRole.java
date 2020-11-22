@@ -9,7 +9,7 @@ public class ClubRole {
     @GeneratedValue
     private Long id;
     private Code code;
-    private Group group;
+    private AgeGrouping ageGrouping;
     private Role role;
     private Year year;
 
@@ -42,12 +42,12 @@ public class ClubRole {
         this.code = code;
     }
 
-    public Group getGroup() {
-        return group;
+    public AgeGrouping getAgeGrouping() {
+        return ageGrouping;
     }
 
-    public void setGroup(Group group) {
-        this.group = group;
+    public void setAgeGrouping(AgeGrouping ageGrouping) {
+        this.ageGrouping = ageGrouping;
     }
 
     public Role getRole() {

@@ -47,16 +47,20 @@ public class UserControllerHelper {
                                             UserRepository userRepository, ClubRepository clubRepository){
         //TODO: Check that logged in user has permission to access this.
         LOGGER.info("Request from user:{} to save details of user with id:{}", LoggedInUser.getLoggedInUser(), userId);
-
+        //Retrieve the user from the User repository using the UserId passed in
         Long usersId = Long.parseLong(userId);
         Optional<User> user = userRepository.findById(usersId);
         if(user.isPresent()) {
+            //Get the User's clubrole? What's going on here?
+            //Getting the Club by looking in the Club Repository
+            //But there could be a List of Clubs ?
+            //*** Getting the individual Club referred to in the ClubRole - only 1.
             Optional<Club> usersClub = clubRepository.findById(clubRole.getClub().getId());
             if (usersClub.isPresent()) {
                 clubRole.setClub(usersClub.get());
                 System.out.println(clubRole.getClub().getClubName());//Save clubRole info..
                 System.out.println(clubRole.getCode());
-                System.out.println(clubRole.getGroup());
+                System.out.println(clubRole.getAgeGrouping());
                 System.out.println(clubRole.getRole());
                 System.out.println(clubRole.getYear());
                 clubRole.setUser(user.get());
@@ -123,7 +127,7 @@ public class UserControllerHelper {
         //Add enums
         List<Club> listOfClubs = clubRepository.findAll();
         modelAndView.addObject("clubs", listOfClubs);
-        modelAndView.addObject("groups", Group.values());
+        modelAndView.addObject("ageGroups", AgeGrouping.values());
         modelAndView.addObject("codes", Code.values());
         modelAndView.addObject("roles", Role.values());
         List<Year> yearOptions = new ArrayList<>();
