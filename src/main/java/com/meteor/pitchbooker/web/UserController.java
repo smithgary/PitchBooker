@@ -63,13 +63,13 @@ public class UserController {
     }
 
     @PostMapping("/user/{id}/roles")
-    public ModelAndView addUserRoles(Model model, @ModelAttribute ClubRole clubRole, @PathVariable String id) {
+    public ModelAndView addUserRoles(@ModelAttribute ClubRole clubRole,
+                                     @PathVariable String id) {
         ModelAndView roleInfoWithUser = userControllerHelper
                 .addRoleInfoForUser(new ModelAndView("user-roles"), id, userRepository, clubRepository);
 
         return userControllerHelper
-                .saveClubRoleAndUser(roleInfoWithUser, clubRole, id, userRepository, clubRepository);
-
+                .saveClubRoleAndUser(roleInfoWithUser, clubRole, id, userRepository, clubRepository, clubRoleRepository);
     }
 
 

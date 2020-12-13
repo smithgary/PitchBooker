@@ -1,6 +1,6 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title> Club User Roles</title>
     <meta charset="UTF-8">
     <title>Users</title>
 </head>
@@ -31,9 +31,9 @@
             <td th:text="*{userId}"></td>
         </tr>
     </table>
+</div>
     <div th:if="${user !=null}">
         <form action="#" th:action="@{/user/{id}/roles(id=${user.userId})}" th:object="${clubRole}" method="post">
-            <p th:text="${user.userId}"></p>
             <table>
                 <tr>
                     <th>Club</th>
@@ -45,6 +45,7 @@
                 </tr>
                 <tr>
                     <td>
+                        <input type="hidden" th:value="${clubRole}" th:attr="name='activeClubRoleId'" />
                         <select th:field="*{club.id}">
                             <option th:each="club: ${clubs}"
                                     th:value="${club.id}"
@@ -86,6 +87,26 @@
             </table>
         </form>
     </div>
-</div>
+    <div th:if="${usersClubRoles !=null}">
+        <h3>UsersClubRoles are here!</h3>
+        <table>
+            <tr>
+                <th>Club</th>
+                <th>Age Group</th>
+                <th>Code</th>
+                <th>Role</th>
+                <th>Season</th>
+            </tr>
+            <th:block th:each="clubRole : ${usersClubRoles}" th:object="${clubRole}">
+                <tr>
+                    <td th:text="${clubRole.club.clubName}"></td>
+                    <td th:text="${clubRole.ageGrouping}"></td>
+                    <td th:text="${clubRole.code}"></td>
+                    <td th:text="${clubRole.role}"></td>
+                    <td th:text="${clubRole.year}"></td>
+                </tr>
+            </th:block>
+        </table>
+    </div>
 </body>
 </html>

@@ -2,6 +2,7 @@ package com.meteor.pitchbooker.service;
 
 import com.meteor.pitchbooker.domain.*;
 import com.meteor.pitchbooker.repository.ClubRepository;
+import com.meteor.pitchbooker.repository.ClubRoleRepository;
 import com.meteor.pitchbooker.repository.UserRepository;
 import com.meteor.pitchbooker.utils.LoggedInUser;
 import org.slf4j.LoggerFactory;
@@ -35,63 +36,35 @@ public class UserControllerHelper {
         return withNewUser;
     }
 
-    /**
-     * Not yet working properly
-     * Should
-     *      -Store the Clubrole into the db,
-     *      -Update the User with the new Clubrole added,
-     *      -Update the Club with the new Clubrole added,
-     *      -Return the model with the updated UserClubRoles to be displayed in a table.
-     */
-    public ModelAndView saveClubRoleAndUser(ModelAndView modelAndView, ClubRole clubRole, String userId,
-                                            UserRepository userRepository, ClubRepository clubRepository){
+     public ModelAndView saveClubRoleAndUser(ModelAndView modelAndView,
+                                            ClubRole clubRole,
+                                            String userId,
+                                            UserRepository userRepository,
+                                            ClubRepository clubRepository,
+                                            ClubRoleRepository clubRoleRepository){
         //TODO: Check that logged in user has permission to access this.
-        LOGGER.info("Request from user:{} to save details of user with id:{}", LoggedInUser.getLoggedInUser(), userId);
-        //Retrieve the user from the User repository using the UserId passed in
+
         Long usersId = Long.parseLong(userId);
         Optional<User> user = userRepository.findById(usersId);
         if(user.isPresent()) {
-            //Get the User's clubrole? What's going on here?
-            //Getting the Club by looking in the Club Repository
-            //But there could be a List of Clubs ?
-            //*** Getting the individual Club referred to in the ClubRole - only 1.
             Optional<Club> usersClub = clubRepository.findById(clubRole.getClub().getId());
             if (usersClub.isPresent()) {
-                clubRole.setClub(usersClub.get());
-                System.out.println(clubRole.getClub().getClubName());//Save clubRole info..
-                System.out.println(clubRole.getCode());
-                System.out.println(clubRole.getAgeGrouping());
-                System.out.println(clubRole.getRole());
-                System.out.println(clubRole.getYear());
-                clubRole.setUser(user.get());
-                System.out.println(clubRole.getUser().getFirstName() + " " + clubRole.getUser().getLastName());
-                // Save the Clubrole to the db
-                //clubRoleRepository.save(clubRole);
-
-                //Update the User and Save the user, with the new clubrole in the db
-                Set<ClubRole> usersClubRoles = user.get().getClubRoles();
-                usersClubRoles.add(clubRole);
-                user.get().setClubRoles(usersClubRoles);
-                userRepository.save(user.get());
-
-                // Update the Club and Save the club, with the new clubrole in the db
-//                Set<ClubRole> clubsClubRoles = usersClub.get().getClubRoles();
-//                clubsClubRoles.add(clubRole);
-//                usersClub.get().setClubRoles(clubsClubRoles);
-//                clubRepository.save(usersClub.get());
-// WILL BE->    modelAndView.addObject("usersClubRoles", user.get().getClubRoles());
-                // OLD VERSION model.addAttribute("usersClubRoles", user.get().getClubRoles());
-                // NOT NEEDED (Don't think) as will already be present // model.addAttribute("user", user.get());
+                saveClubRole(clubRoleRepository, clubRole, usersClub, user);
+                modelAndView = addUserClubRoles(modelAndView,  user);
             }
         }
         return modelAndView;
     }
 
-    /**
-     * Updates the Model. For the chosen user, gets user from the repository.
-     * Calls to update the list of stored clubroles for that user.
-     * Also calls to get the list of options for adding another clubrole
-     */
+
+    public void saveClubRole(ClubRoleRepository clubRoleRepository, ClubRole clubRole, Optional<Club> usersClub, Optional<User> user){
+
+        clubRole.setClub(usersClub.get());
+        clubRole.setUser(user.get());
+        clubRoleRepository.save(clubRole);
+
+    }
+
     public ModelAndView addRoleInfoForUser(ModelAndView modelAndView, String userId, UserRepository userRepository, ClubRepository clubRepository){
        //Todo: Check that the loggedin user has the correct privilege to do this.
         String loggedInUser = LoggedInUser.getLoggedInUser();
@@ -100,7 +73,6 @@ public class UserControllerHelper {
         Optional<User> user = userRepository.findById(usersId);
 
         if(user.isPresent()){
-            //Would like to do this without mutating the ModelAndView Object
             modelAndView = addUserClubRoles(modelAndView, user);
         }
 
@@ -109,9 +81,6 @@ public class UserControllerHelper {
         return modelAndView;
     }
 
-    /**
-     * Updates the model, adding the user, user id and list of stored ClubRoles for that user
-     */
     private ModelAndView addUserClubRoles(ModelAndView modelAndView, Optional<User> user){
         modelAndView.addObject("user", user.get());
         modelAndView.addObject("userId", user.get().getUserId().toString());
@@ -146,6 +115,61 @@ public class UserControllerHelper {
         user.setEnabled(false);
         userRepository.save(user);
         LOGGER.info("New user stored - {}", user.getFirstName() + " " + user.getLastName());
+    }
+
+    //Helper functions to print to console
+    public void printClubRoleDetails(ClubRole clubRole, Club club, User user){
+        System.out.println("ClubRole clubrole (club, clubname) passed in is:" + clubRole.getClub().getClubName());
+        System.out.println("ClubRole clubrole (id) passed in is:" + clubRole.getId());
+        System.out.println("Optional<Club> usersClub passed in is:" + club.getClubName());
+        System.out.println("User user passed in is:" + user.getFirstName() + " " + user.getLastName());
+    }
+
+    public void printClubRoleInfo(ClubRole clubRole){
+        System.out.println(clubRole.getClub().getClubName());//Save clubRole info..
+        System.out.println(clubRole.getCode());
+        System.out.println(clubRole.getAgeGrouping());
+        System.out.println(clubRole.getRole());
+        System.out.println(clubRole.getYear());
+    }
+
+    public void printClubRoles(Set<ClubRole> usersClubRoles){
+        usersClubRoles.stream().forEach(cr -> {
+            System.out.println("*ClubName* :" + cr.getClub().getClubName() +
+                    " #ClubId# :" + cr.getClub().getId() +
+                    " ### :" + cr.getAgeGrouping() +
+                    " ### :" + cr.getCode() +
+                    " ### :" + cr.getRole() +
+                    " ### :" + cr.getYear() +
+                    " ### :" + cr.getId());
+        });
+    }
+
+    //NOT NEEDED??
+    public User updateUserWithClubRole(Optional<User> user, ClubRole clubRole,
+                                       ClubRoleRepository clubRoleRepository, UserRepository userRepository){
+        /**
+         * Update the User and Save the user, with the new clubrole in the db
+         * ClubRole has been saved at this point, referred to as clubRole
+         *
+         * So..
+         * 1. Get User's Set of ClubRoles
+         * 2. Add the newly saved ClubRole to that set
+         * 3. Save the User with the new set of Clubroles.
+         */
+        //1. Get the User's set of Clubroles
+        System.out.println("Saving Club with new clubrole");
+        Set<ClubRole> usersClubRoles = user.get().getClubRoles();
+        System.out.println("UsersClubRoles size : " +  usersClubRoles.size());// ? "None" : usersClubRoles.forEach(roles -> roles.getId()));
+        usersClubRoles.add(clubRole);
+        //usersClubRoles.add(clubRoleRepository.getOne(clubRole.getId()));    //Issue here?
+        System.out.println("After adding one, size is now: " + usersClubRoles.size());
+
+        user.get().setClubRoles(usersClubRoles);
+        //printClubRoles(usersClubRoles);
+        //Getting error with next line: Unable to find ClubRole with id X, where X is the userId - should be the ClubRoleId.!
+        //userRepository.save(user.get());  //Maybe don't need to do this?
+        return user.get();
     }
 }
 

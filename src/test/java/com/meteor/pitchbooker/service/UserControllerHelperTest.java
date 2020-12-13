@@ -1,7 +1,6 @@
 package com.meteor.pitchbooker.service;
 
-import com.meteor.pitchbooker.domain.Club;
-import com.meteor.pitchbooker.domain.User;
+import com.meteor.pitchbooker.domain.*;
 import com.meteor.pitchbooker.repository.ClubRepository;
 import com.meteor.pitchbooker.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +13,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,6 +34,7 @@ public class UserControllerHelperTest {
     private MockMvc mockMvc;
     private List<User> usersInDb;
     private List<Club> clubsInDb;
+    private User newUser;
 
     @BeforeEach
     public void setup(){
@@ -45,6 +47,11 @@ public class UserControllerHelperTest {
         second.setUserId(2L);
         second.setFirstName("Karen");
         second.setLastName("Molloy");
+
+        newUser = new User();  //Not added to usersInDb
+        newUser.setUserId(3L);
+        newUser.setFirstName("Tom");
+        newUser.setLastName("Markham");
 
         usersInDb = new ArrayList<>();
         usersInDb.add(first);
@@ -115,12 +122,35 @@ public class UserControllerHelperTest {
 
         ModelAndViewAssert.assertViewName(testModelAndView, "clubusers");
     }
+    @Test
+    public void testSaveClubRoleAndUser(){
+        //Todo: Create builders for ClubRole etc.
+        /**
+         * Tests:
+         * 1. User in the db, without a ClubRole already stored
+         */
+        when(userRepository.findAll()).thenReturn(usersInDb);
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.ofNullable(usersInDb.get(1)));
+        when(clubRepository.findAll()).thenReturn(clubsInDb);
+        when(clubRepository.findById(1L)).thenReturn(Optional.ofNullable(clubsInDb.get(1)));
+
+        Club club = new Club(); club.setId(1L); club.setClubName("TrialClub");
+        ClubRole clubRole = new ClubRole();
+        clubRole.setClub(club);
+        clubRole.setUser(usersInDb.get(1));
+        clubRole.setAgeGrouping(AgeGrouping.UNDER_12);
+        clubRole.setCode(Code.HURLING);
+        clubRole.setRole(Role.PLAYER);
+        clubRole.setYear(Year.now());
+
+        ModelAndView trialTestModelAndView = new ModelAndView("user-roles");
+        UserControllerHelper userControllerHelper = new UserControllerHelper();
+
+        //ModelAndView testModelAndView = userControllerHelper.saveClubRoleAndUser(trialTestModelAndView, clubRole, "1", userRepository, clubRepository);
+    }
 
     @Test
     public void testSaveUser(){
-        User newUser = new User();
-        newUser.setFirstName("Tom");
-        newUser.setLastName("Markham");
         when(userRepository.findAll()).thenReturn(usersInDb);
         UserControllerHelper userControllerHelper = new UserControllerHelper();
         userControllerHelper.saveUser(newUser, userRepository);
